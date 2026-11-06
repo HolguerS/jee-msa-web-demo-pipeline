@@ -99,16 +99,34 @@ stages:
         steps:
           - task: ManualValidation@0
             inputs:
-              notifyUsers: 'jefersonvillacis@hotmail.com'
+              notifyUsers: 'holger.patricio1991@gmail.com'
               instructions: 'Aprobación requerida para ejecutar la fase de despliegue continuo en OpenShift Sandbox.'
               onTimeout: 'reject'
 
   # ==========================================
-  # STAGE 3: DESPLIEGUE CONTINUO (CD)
+  # STAGE 3: SEGURIDAD (SECURITY)
+  # ==========================================
+  - stage: Security
+    displayName: 'Security'
+    dependsOn: Approval
+    condition: succeeded()
+    jobs:
+      - job: security_scan
+        displayName: 'Validaciones de Seguridad'
+
+        steps:
+          - script:
+              echo "Iniciando validaciones de seguridad..."
+              echo "Stage de seguridad ejecutado correctamente."
+              echo "Pendiente de incorporar herramientas de análisis."           
+            displayName: 'Validación de Seguridad'
+
+  # ==========================================
+  # STAGE 4: DESPLIEGUE CONTINUO (CD)
   # ==========================================
   - stage: CD
     displayName: 'CD'
-    dependsOn: Approval
+    dependsOn: Security
     condition: succeeded()
     jobs:
       - job: deploy_openshift
